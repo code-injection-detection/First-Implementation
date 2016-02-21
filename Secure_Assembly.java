@@ -19,6 +19,9 @@ public class Secure_Assembly {
 		ArrayList<String> list = new ArrayList<String>();
 		sc.useDelimiter("\n");
 		String ulabel = "unique";
+		// the n is the number of instructions of per keyshare
+		// the k is the number of bytes in a keyshare (note: a NOP is 1 byte)
+		// i and counter are just counting variables, not too important
 		int n= 2;
 		int counter = 0;
 		int i = 0;

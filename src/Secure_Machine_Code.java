@@ -13,7 +13,7 @@ public class Secure_Machine_Code {
 		String newfilename = filename.substring(0,filename.length()-4)+"_sec.exe";
 		//int n = 2;
 		
-		int num_of_keys = 3;
+		int num_of_keys = 4;
 		// 
 		FileInputStream fr = new FileInputStream(new File(filename));
 		FileOutputStream fw = new FileOutputStream(new File(newfilename));
@@ -38,7 +38,7 @@ public class Secure_Machine_Code {
 	    int n = arr.length;
 	    for(int i=0;i<n-(2+num_of_keys);i++)
 	    {
-	    	if(arr[i]==-21 && (arr[i+1] == (byte)num_of_keys)) // int -21 = jmp opcode 
+	    	if(arr[i]==-21 && (arr[i+1] == (byte)num_of_keys)) // int -21 = jmp opcode, and the arr[i+1] has to be the offset
 	    	{
 	    		for(int j=0;j<num_of_keys;j++)
 	    		{

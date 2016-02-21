@@ -25,7 +25,7 @@ public class Secure_Assembly {
 		int num_of_grouped_orig_instr= 2;
 		int label_counter = 0;
 		int i = 0;
-		int  num_of_interleaved_nops = 2;
+		int  num_of_interleaved_nops = 3;
 		
 		// This puts the file into the ArrayList and looks for the start of the code
 		// which is ".code"

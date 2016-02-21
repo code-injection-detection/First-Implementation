@@ -19,13 +19,13 @@ public class Secure_Assembly {
 		ArrayList<String> list = new ArrayList<String>();
 		sc.useDelimiter("\n");
 		String ulabel = "unique";
-		// the n is the number of instructions of per keyshare
-		// the k is the number of bytes in a keyshare (note: a NOP is 1 byte)
-		// i and counter are just counting variables, not too important
-		int n= 2;
-		int counter = 0;
+		// the num_of_grouped_orig_instr is the number of original instructions per keyshare
+		// the num_of_interleaved_nops is the number of bytes in a keyshare (note: a NOP is 1 byte)
+		// i and label_counter are just counting variables, not too important
+		int num_of_grouped_orig_instr= 2;
+		int label_counter = 0;
 		int i = 0;
-		int  k = 2;
+		int  num_of_interleaved_nops = 2;
 		
 		// This puts the file into the ArrayList and looks for the start of the code
 		// which is ".code"
@@ -66,15 +66,16 @@ public class Secure_Assembly {
 				break;
 			}
 			
-			if (i == n)
+			//if we have exhausted the group of commands, we need to add a jump and nops, and a label after them
+			if (i == num_of_grouped_orig_instr)
 			{
-				list.add(" jmp " + ulabel + counter);
-				for (int j = 0; j < k; j++)
+				list.add(" jmp " + ulabel + label_counter);
+				for (int j = 0; j < num_of_interleaved_nops; j++)
 					list.add("NOP");
-				list.add(ulabel + counter + ": " + line);
+				list.add(ulabel + label_counter + ": " + line);
 				//System.out.println(line);
 				i = 0;
-				counter++;
+				label_counter++;
 				continue;
 			}
 			

@@ -13,13 +13,13 @@ public class Secure_Machine_Code {
 		String newfilename = filename.substring(0,filename.length()-4)+"_sec.exe";
 		//int n = 2;
 		
-		int k = 3;
+		int num_of_keys = 3;
 		// 
 		FileInputStream fr = new FileInputStream(new File(filename));
 		FileOutputStream fw = new FileOutputStream(new File(newfilename));
 		ArrayList<Byte> list = new ArrayList<Byte>();
-		ArrayList[] keys = new ArrayList[k];
-		for(int i=0;i<k;i++)
+		ArrayList[] keys = new ArrayList[num_of_keys];
+		for(int i=0;i<num_of_keys;i++)
 		{
 			keys[i] =new  ArrayList<Byte>();
 		}
@@ -36,11 +36,11 @@ public class Secure_Machine_Code {
 	    	arr[i] = list.get(i);
 	    }
 	    int n = arr.length;
-	    for(int i=0;i<n-(2+k);i++)
+	    for(int i=0;i<n-(2+num_of_keys);i++)
 	    {
-	    	if(arr[i]==-21 && (arr[i+1] == (byte)k)) // int -21 = byte 90 = nop opcode 
+	    	if(arr[i]==-21 && (arr[i+1] == (byte)num_of_keys)) // int -21 = jmp opcode 
 	    	{
-	    		for(int j=0;j<k;j++)
+	    		for(int j=0;j<num_of_keys;j++)
 	    		{
 	    			byte temp = randomByte();
 	    			keys[j].add(temp);
@@ -49,7 +49,7 @@ public class Secure_Machine_Code {
 	    	}
 	    }
 		
-	    for(int i=0;i<k;i++)
+	    for(int i=0;i<num_of_keys;i++)
 	    {
 	    	System.out.printf("Keyshare %d : 0x%02X \n",i, xor(keys[i]));
 	    }

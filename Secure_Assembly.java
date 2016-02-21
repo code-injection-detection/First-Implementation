@@ -1,0 +1,134 @@
+import java.util.*;
+import java.io.*;
+/*
+ * This program takes as input (has hardcoded name of file in it). The file
+ * is a .asm / assembly file hence, it is in text format.
+ * It inserts nop instructions (which will be replaced with keyshares) between
+ * instructions. 
+ * It does this by some not-very-clean parsing, (but we could refine it later)
+ * (The point is that parsing an assembly file is still way easier than parsing
+ * a C file.)
+ * To handle the jumps over the instructions, we add labels. 
+ */
+public class Secure_Assembly {
+	
+	public static void main(String[] args) throws Exception
+	{
+		String filename = "C:/asm programs/add2.asm";
+		Scanner sc = new Scanner(new File(filename));
+		ArrayList<String> list = new ArrayList<String>();
+		sc.useDelimiter("\n");
+		String ulabel = "unique";
+		int n= 2;
+		int counter = 0;
+		int i = 0;
+		int  k = 2;
+		
+		// This puts the file into the ArrayList and looks for the start of the code
+		// which is ".code"
+		
+		while (sc.hasNext())
+		{
+			String line = sc.next();
+			line = removeNewlines(line);
+			//System.out.println(removeSpaces(line));
+			list.add(line);
+			if (removeSpaces(line).indexOf(".code")!=-1)
+			{
+				//System.out.println("I found the beginning of code");
+				break;
+			}			
+			
+		}
+		
+		// Adding these NOPs help identify the beginning of code for the Secure_Machine_code program
+		list.add("NOP");
+		list.add("NOP");
+		
+		// This inserts the jumps and NOPs in the code.
+		// It breaks at the end of the code ("end")
+		while(sc.hasNext())
+		{
+			String line = sc.next();
+			line = removeNewlines(line);
+			if (removeSpaces(line) == "")
+			{
+				//System.out.println("I see an empty line");
+				continue;
+			}
+			if (removeSpaces(line).startsWith("end"))
+			{
+				//System.out.println("I came to end");
+				list.add(line);
+				break;
+			}
+			
+			if (i == n)
+			{
+				list.add(" jmp " + ulabel + counter);
+				for (int j = 0; j < k; j++)
+					list.add("NOP");
+				list.add(ulabel + counter + ": " + line);
+				//System.out.println(line);
+				i = 0;
+				counter++;
+				continue;
+			}
+			
+			i++;
+			list.add(line);
+			//System.out.println(line);
+		}
+		
+		
+		for (String s: list)
+		{
+			System.out.println(s);
+		}
+		
+		// This write the modified lines into a new ASM
+		// You can use TASM to compile this ASM into machine code
+		String finalfile = "";
+		String newfilename = filename.substring(0,filename.length()-4) + "_sec.asm";
+		System.out.println(newfilename);
+		BufferedWriter bw = new BufferedWriter(new FileWriter(newfilename));
+		for (String line: list)
+		{
+			bw.write(line);
+			bw.newLine();
+		}
+		
+		bw.write(finalfile);
+		bw.flush();
+
+		
+	}
+	static String removeSpaces(String abc)
+	{
+		String line = "";
+		for(int i=0;i<abc.length();i++)
+		{
+			if(abc.charAt(i) == ' ' || abc.charAt(i)=='\t' || abc.charAt(i) == '\n' || abc.charAt(i) == '\r')
+			{
+				
+			}
+			else
+			{
+				line = line+(abc.charAt(i)+"").toLowerCase();
+			}
+		}
+		
+		return line;
+	}
+	static String removeNewlines(String s)
+	{
+		String line = "";
+		for (int i = 0; i < s.length(); i++)
+		{
+			if (s.charAt(i) != '\r' && s.charAt(i) != '\n')
+				line += s.charAt(i);
+		}
+		return line;
+	}
+
+}

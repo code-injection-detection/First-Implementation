@@ -13,7 +13,7 @@ public class Secure_Machine_Code {
 		String newfilename = filename.substring(0,filename.length()-7)+"ksec.exe";
 		//int n = 2;
 		
-		int num_of_keys = 15; //this should be equal to the number of nops we insert in Secure_Assembly.java (now that we assume that 1 NOP = 1key)
+		int num_of_keys = 5; //this should be equal to the number of nops we insert in Secure_Assembly.java (now that we assume that 1 NOP = 1key)
 		// 
 		FileInputStream fr = new FileInputStream(new File(filename));
 		FileOutputStream fw = new FileOutputStream(new File(newfilename));
@@ -38,7 +38,7 @@ public class Secure_Machine_Code {
 	    int n = arr.length;
 	    for(int i=0;i<n-(2+num_of_keys);i++)
 	    {
-	    	if(arr[i]==-21 && (arr[i+1] == (byte)(num_of_keys+1))) // int -21 = jmp opcode, and the arr[i+1] has to be the offset (number of nops + 1 )
+	    	if(arr[i]==-21 && (arr[i+1] == (byte)(num_of_keys+1)) && k_nops_after_us(num_of_keys,arr,i)) // int -21 = jmp opcode, and the arr[i+1] has to be the offset (number of nops + 1 ) , and we have to have num_of_keys NOPs after us
 	    	{
 	    		for(int j=0;j<num_of_keys;j++)
 	    		{
@@ -80,6 +80,17 @@ public class Secure_Machine_Code {
 	static byte randomByte()
 	{
 		return (byte)(Math.random()*128); 
+	}
+	
+	static boolean k_nops_after_us(int k, byte[] arr, int arrindex)  
+	{
+		int i=arrindex+2; //we start where we expect the first nop to be found
+		for(int j=1;j<=k;j++,i++)
+		{
+			if (arr[i]!= (byte) 0x90) //NOP opcode
+				return false;
+		}
+		return true;
 	}
 
 }

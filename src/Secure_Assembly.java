@@ -25,7 +25,7 @@ public class Secure_Assembly {
 		int num_of_grouped_orig_instr= 1;
 		int label_counter = 0;
 		int i = 0;
-		int  num_of_interleaved_nops = 5;
+		int  num_of_interleaved_nops = 5;   //this should be equal to the number of keys we use in Secure_Machine_Code.java (now that we assume that 1 NOP = 1key)
 		
 		// This puts the file into the ArrayList and looks for the start of the code
 		// which is ".code"

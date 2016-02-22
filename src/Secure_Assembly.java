@@ -22,10 +22,10 @@ public class Secure_Assembly {
 		// the num_of_grouped_orig_instr is the number of original instructions per keyshare
 		// the num_of_interleaved_nops is the number of bytes in a keyshare (note: a NOP is 1 byte)
 		// i and label_counter are just counting variables, not too important
-		int num_of_grouped_orig_instr= 2;
+		int num_of_grouped_orig_instr= 1;
 		int label_counter = 0;
 		int i = 0;
-		int  num_of_interleaved_nops = 3;
+		int  num_of_interleaved_nops = 5;
 		
 		// This puts the file into the ArrayList and looks for the start of the code
 		// which is ".code"
@@ -72,15 +72,17 @@ public class Secure_Assembly {
 				list.add(" jmp " + ulabel + label_counter);
 				for (int j = 0; j < num_of_interleaved_nops; j++)
 					list.add("NOP");
-				list.add(ulabel + label_counter + ": " + line);
+				//list.add(ulabel + label_counter + ": " + line);   
+				list.add(ulabel + label_counter + ": " );          //we are just adding the label, not any command
 				//System.out.println(line);
 				i = 0;
 				label_counter++;
-				continue;
+				//continue;
 			}
 			
+			list.add(line);  //the default behavior is the program to add the next command
 			i++;
-			list.add(line);
+			
 			//System.out.println(line);
 		}
 		

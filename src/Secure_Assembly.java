@@ -19,13 +19,10 @@ public class Secure_Assembly {
 		ArrayList<String> list = new ArrayList<String>();
 		sc.useDelimiter("\n");
 		String ulabel = "unique";
-		// the num_of_grouped_orig_instr is the number of original instructions per keyshare
-		// the num_of_interleaved_nops is the number of bytes in a keyshare (note: a NOP is 1 byte)
-		// i and label_counter are just counting variables, not too important
-		int num_of_grouped_orig_instr= 1;
-		int label_counter = 0;
+		int n= 2;
+		int counter = 0;
 		int i = 0;
-		int  num_of_interleaved_nops = 5;   //this should be equal to the number of keys we use in Secure_Machine_Code.java (now that we assume that 1 NOP = 1key)
+		int  k = 2;
 		
 		// This puts the file into the ArrayList and looks for the start of the code
 		// which is ".code"
@@ -62,27 +59,35 @@ public class Secure_Assembly {
 			if (removeSpaces(line).startsWith("end"))
 			{
 				//System.out.println("I came to end");
+				
+				list.add("jmp end_of_program_label");
+				
+				for(int m=0;m<k;m++)	//for reasons of efficiency, we force the end of file canary
+				{   	                // to be followed by as many nops as the number of keyshares
+					list.add("nop");    // 
+				}
+				
+				
+				list.add("end_of_program_label: mov ah, 4ch");
+				list.add("int 21h");
 				list.add(line);
 				break;
 			}
 			
-			//if we have exhausted the group of commands, we need to add a jump and nops, and a label after them
-			if (i == num_of_grouped_orig_instr)
+			if (i == n)
 			{
-				list.add(" jmp " + ulabel + label_counter);
-				for (int j = 0; j < num_of_interleaved_nops; j++)
+				list.add(" jmp " + ulabel + counter);
+				for (int j = 0; j < k; j++)
 					list.add("NOP");
-				//list.add(ulabel + label_counter + ": " + line);   
-				list.add(ulabel + label_counter + ": " );          //we are just adding the label, not any command
+				list.add(ulabel + counter + ": " + line);
 				//System.out.println(line);
 				i = 0;
-				label_counter++;
-				//continue;
+				counter++;
+				continue;
 			}
 			
-			list.add(line);  //the default behavior is the program to add the next command
 			i++;
-			
+			list.add(line);
 			//System.out.println(line);
 		}
 		

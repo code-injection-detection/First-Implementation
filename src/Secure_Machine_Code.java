@@ -9,26 +9,27 @@ import java.io.*;
 public class Secure_Machine_Code {
 	public static void main(String[] args) throws Exception
 	{
-		String filename = "C:/asm programs/add2_sec.exe";
-		String newfilename = filename.substring(0,filename.length()-7)+"ksec.exe";
+		String filename = "C:/asm programs/add2_sec.exe"; 
+		String newfilename = filename.substring(0,filename.length()-4)+"_sec.exe";
 		//int n = 2;
 		
-		int num_of_keys = 5; //this should be equal to the number of nops we insert in Secure_Assembly.java (now that we assume that 1 NOP = 1key)
+		int k = 2;
+		int numberofkeys = k-1;
 		// 
 		FileInputStream fr = new FileInputStream(new File(filename));
 		FileOutputStream fw = new FileOutputStream(new File(newfilename));
 		ArrayList<Byte> list = new ArrayList<Byte>();
-		ArrayList[] keys = new ArrayList[num_of_keys];
-		for(int i=0;i<num_of_keys;i++)
+		ArrayList[] keys = new ArrayList[numberofkeys]; // keeps track of the different 
+		for(int i=0;i<numberofkeys;i++)
 		{
-			keys[i] =new  ArrayList<Byte>();
+			keys[i] =new  ArrayList<Byte>(); //initializes the values
 		}
 		
 		byte[] b =  new byte[1];
-		while(fr.available()>0)
+		while(fr.available()>0) 
 		{
 			fr.read(b);
-			list.add(b[0]);
+			list.add(b[0]);   // add bytes to the list
 		}
 	    byte[] arr = new byte[list.size()];
 	    for(int i=0;i<list.size();i++)
@@ -36,31 +37,77 @@ public class Secure_Machine_Code {
 	    	arr[i] = list.get(i);
 	    }
 	    int n = arr.length;
-	    for(int i=0;i<n-(2+num_of_keys);i++)
+	    
+	    
+	    // This loop goes from the end of the file to the beginning, looking for
+	    // The instruction opcodes for "B4 4C CD 21" which marks the signal to end the program
+	    // Before these opcodes, we have a EB 0k followed by k NOPs.
+	    // We need to put the ending canary right after the EB 0k
+	    boolean end_canary_loop = false;
+	    for(int i=arr.length-4;i>=0;i--)
 	    {
-	    	if(arr[i]==-21 && (arr[i+1] == (byte)(num_of_keys+1)) && k_nops_after_us(num_of_keys,arr,i)) // int -21 = jmp opcode, and the arr[i+1] has to be the offset (number of nops + 1 ) , and we have to have num_of_keys NOPs after us
+	    	if(arr[i]== -76  && arr[i+1] == 76 && arr[i+2] == -51  && arr[i+3] == 33 )
 	    	{
-	    		for(int j=0;j<num_of_keys;j++)
+	    		for(int j=i; j> 0 && (!end_canary_loop); j--)
+	    		{
+	    			if(arr[j] == -21) //-21 is opcode for EB
+	    			{
+	    				// -105 == 97 in the machine code
+	    				arr[j+2] = -105; // j+2 is the location of the first NOP after EB 0k
+	    				end_canary_loop = true;
+	    				break;
+	    			}
+	    		}
+	    	}
+	    	if (end_canary_loop == true)
+	    		break;
+	    }
+	    
+	    for(int i=0;i<n-(2+k);i++)
+	    {
+	    	
+	    	
+	    	if(arr[i]==-21 && (arr[i+1] == (byte)k)) // int -21 = byte eb = jmp 
+	    	{
+	    		
+	    		boolean knops =  true;   // is true if there are k nops...
+	    		for(int x= i+2; x<i+2+k ; x++)
+		    	{
+		    		if (arr[x] != -112)
+		    			knops = false;
+		    	}
+	    		
+	    		if (knops == false)
+	    			continue;
+	    		
+	    		arr[i+2] = 39; // the layout is eb 0k 27 (<-- canary) keyshare1 keyshare2 ...
+	    		for(int j=0;j<numberofkeys;j++)
 	    		{
 	    			byte temp = randomByte();
 	    			keys[j].add(temp);
-	    			arr[i+2+j] = temp;
+	    			arr[i+3+j] = temp;
 	    		}
 	    	}
 	    }
 		
-	    for(int i=0;i<num_of_keys;i++)
+	 /*   for(int i=arr.length-4;i>=0;i--)
 	    {
-	    	try
+	    	if(arr[i]== -76  && arr[i+1] == 76 && arr[i+2] == -51  && arr[i+3] == 33 )
 	    	{
-	    		System.out.printf("Keyshare %d : 0x%02X \n",i, xor(keys[i]));
+	    		for(int j=i; j> 0 ; j--)
+	    		{
+	    			if(arr[j] == -21)
+	    			{
+	    				arr[j+2] = -105; 
+	    			}
+	    		}
 	    	}
-	    	catch(IndexOutOfBoundsException e)
-	    	{
-	    		System.out.println("Index out of bounds in Xor! Perhaps none of the keys were populated with values... And most likey this is because arr[i+1] did not have the value we expected it to have");
-	    		System.out.println("Index of error: i="+i);
-	    		System.exit(-1);
-	    	}
+	    }
+	    
+	   */ 
+	    for(int i=0;i<numberofkeys;i++)
+	    {
+	    	System.out.printf("Keyshare %d : 0x%02X \n",i, xor(keys[i]));
 	    }
 	    
 	    fw.write(arr);
@@ -80,17 +127,6 @@ public class Secure_Machine_Code {
 	static byte randomByte()
 	{
 		return (byte)(Math.random()*128); 
-	}
-	
-	static boolean k_nops_after_us(int k, byte[] arr, int arrindex)  
-	{
-		int i=arrindex+2; //we start where we expect the first nop to be found
-		for(int j=1;j<=k;j++,i++)
-		{
-			if (arr[i]!= (byte) 0x90) //NOP opcode
-				return false;
-		}
-		return true;
 	}
 
 }

@@ -138,19 +138,10 @@ offsetcalc:
 mov tempax, eax
 mov tempdx, edx
 mov tempsi, esi
-
-
-
 mov eax, stackstart
 sub eax, stackptr
 dec eax
-
-
 sar eax, 2h
-
-
-
-
 sub eax, stackptr
 neg eax
 mov stackiter, eax 

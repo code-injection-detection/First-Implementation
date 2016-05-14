@@ -22,7 +22,7 @@ call end_code
 
 mov esi, eax
 nop
- jmp unique0
+jmp unique0
 NOP
 NOP
 unique0: nop
@@ -30,7 +30,7 @@ nop
 mov cl, al
 nop
 add esi, eax
- jmp unique1
+jmp unique1
 NOP
 NOP
 unique1: nop
@@ -38,7 +38,7 @@ dec eax
 mov esi, eax
 nop
 nop
- jmp unique2
+jmp unique2
 NOP
 NOP
 unique2: nop
@@ -46,7 +46,7 @@ mov cl, al
 nop
 add esi, eax
 dec eax
- jmp unique3
+jmp unique3
 NOP
 NOP
 unique3: nop
@@ -54,7 +54,7 @@ mov esi, eax
 nop
 nop
 mov cl, al
- jmp unique4
+jmp unique4
 NOP
 NOP
 unique4: nop
@@ -62,7 +62,7 @@ nop
 add esi, eax
 dec eax
 add esi, eax
- jmp unique5
+jmp unique5
 NOP
 NOP
 unique5: nop
@@ -70,7 +70,7 @@ dec eax
 mov esi, eax
 nop
 nop
- jmp unique6
+jmp unique6
 NOP
 NOP
 unique6: nop
@@ -78,7 +78,7 @@ mov cl, al
 nop
 add esi, eax
 dec eax
- jmp unique7
+jmp unique7
 NOP
 NOP
 unique7: nop
@@ -251,29 +251,27 @@ ret
 end_code endp
 
    ; ****
-    verify proc
-	push esi
-	mov esi, START_OF_CODE
-	mov bh, 0
-;	mov ah, byte ptr [esi]
+verify proc
+push esi
+mov esi, START_OF_CODE
+mov bh, 0
 loop1:	
-      cmp esi, END_OF_CODE
-      jge end_label
-	cmp byte ptr [esi], 0ebh
-	jne loop_label
-	cmp byte ptr [esi+1],2
-	jne loop_label
-	cmp byte ptr [esi+2],97H ;end of file canary
-	je end_label
-	cmp byte ptr [esi+2], 27H ;key share canary
-	jne loop_label
-	
-	xor bh,byte ptr [esi+3]
+cmp esi, END_OF_CODE
+jge end_label
+cmp byte ptr [esi], 0ebh
+jne loop_label
+cmp byte ptr [esi+1],2
+jne loop_label
+cmp byte ptr [esi+2],97H ;end of file canary
+je end_label
+cmp byte ptr [esi+2], 27H ;key share canary
+jne loop_label
+xor bh,byte ptr [esi+3]
 loop_label: add esi,1
-    jmp loop1
+jmp loop1
 end_label: pop esi
- ret
- verify endp
+ret
+verify endp
 
 
 ;****

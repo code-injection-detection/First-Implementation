@@ -13,8 +13,8 @@ END_OF_CODE dd ?
 
 BEGIN PROC 
 call next
- next: pop esi
- mov START_OF_CODE,esi
+next: pop esi
+mov START_OF_CODE,esi
 
 call end_code
 

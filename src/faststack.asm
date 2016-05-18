@@ -37,7 +37,7 @@ pushvalue dd ?
 start:
 BEGIN proc
 
-
+; This puts in key shares into the stack
 mov stackstart, esp 
 mov esi, esp
 stackkeyloop:
@@ -58,7 +58,7 @@ mov realsp, eax
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;push 9h;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;push the value 9h;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 mov ecx, 20000000h
@@ -111,14 +111,6 @@ end_many_push:
 nop
 
 
-
-
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;call ABCD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
@@ -225,7 +217,7 @@ pushloop:
 
 mov temp1si, esi
 mov tomove, ecx
-mov ecx, eax ;changed
+mov ecx, eax 
 sub realsp, 1
 mov esi, realsp
 mov stackptr, esi

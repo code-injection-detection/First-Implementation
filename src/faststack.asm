@@ -1,3 +1,8 @@
+; this code is similar to the sec_stack.asm file and uses the same functions
+; the only difference is that instead of pushing or popping data in a byte by byte fashion, we
+; push and pop a 32-bit word entirely.
+; the assumption is that the stack is 'aligned' hence the need to not split up and insert data in a byte by byte fashion
+
 .386
 include \masm32\include\masm32rt.inc
 .MODEL flat, stdcall 

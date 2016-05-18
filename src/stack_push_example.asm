@@ -366,65 +366,39 @@ invoke ExitProcess, 0
 	  
 offsetcalc: ; writing at the end to avoid problems, input is stackptr which stores 
             ; user's address, "output" is stackiter which is the translation of stackptr to "real" address
-	
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; SAVE ALL THE REGISTERSSSSS~~=!!!
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+offsetcalc:
 
+;Save registers
 mov tempax, eax
 mov tempdx, edx
 mov tempsi, esi
 
-
-mov eax, stackptr
-mov stackdiff, eax
+; Compute stackstart-stackptr-1
 mov eax, stackstart
-sub stackdiff, eax
+sub eax, stackptr
+dec eax
 
-mov eax, Kval
-mov kplus1, eax
-;add kplus1, 1h
-
-mov eax, Kval
-mov kplusn, eax
-mov eax, Nval
-add kplusn, eax
-; we should store the value of ax as well in a temporary variable
-
-
-
-;mov eax, stackdiff ; stackdiff = stackstart-stackptr
-;mov esi, kplus1
-;imul esi       ; signed multiplication, result stored in dx:ax
-
-
-;mov esi, kplusn  ; since idiv only works on registers (assumption)
-;idiv esi ; divides dx:ax , quotient in ax result is (eax = (dx:ax)/si)
-
+; Divide by n
 mov edx, 0h
-mov eax, stackdiff
-neg eax
-mov esi, kplusn
+mov esi, Nval
 div esi
 
+; Multiply by k
 mov edx, 0h
 mov esi, Kval
 mul esi
 
-
-
+; Compute offset to stackptr
+sub eax, stackptr
 neg eax
+mov stackiter, eax 
 
-add eax, stackptr
-
-mov stackiter, eax ;result is stored in stackiter
-
+;Put back register values except eax since we need it to jump
 mov edx, tempdx
 mov esi, tempsi
-
-
 mov eax, retaddress
 jmp eax 
+
 
 	  
 	  

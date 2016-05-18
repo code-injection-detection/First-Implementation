@@ -3,6 +3,7 @@ import java.io.*;
 /*
  * This code reads a compiled exe file and then locates the nop instructions
  * and replaces them with the key share values.
+ Here, the .exe file is the result of assembling a TASM .exe file.
  * 
  */
 
@@ -90,21 +91,7 @@ public class Secure_Machine_Code {
 	    	}
 	    }
 		
-	 /*   for(int i=arr.length-4;i>=0;i--)
-	    {
-	    	if(arr[i]== -76  && arr[i+1] == 76 && arr[i+2] == -51  && arr[i+3] == 33 )
-	    	{
-	    		for(int j=i; j> 0 ; j--)
-	    		{
-	    			if(arr[j] == -21)
-	    			{
-	    				arr[j+2] = -105; 
-	    			}
-	    		}
-	    	}
-	    }
-	    
-	   */ 
+	//printing out data
 	    for(int i=0;i<numberofkeys;i++)
 	    {
 	    	System.out.printf("Keyshare %d : 0x%02X \n",i, xor(keys[i]));

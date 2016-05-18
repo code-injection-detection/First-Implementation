@@ -42,9 +42,11 @@ public class Secure_Machine_Code_Masm2 {
 	    
 	    
 	    // This loop goes from the end of the file to the beginning, looking for
-	    // the values that signal the end the program
-	    // We need a EB 0k followed by k NOPs.
-	    // We need to put the ending canary right after the EB 0k
+	    // the values "EB 0k NOP NOP NOP NOP ... (k times)" that signal the end of the program
+	    // We need the first occurrence of an EB 0k followed by k NOPs.
+	    // 
+	    // We need to put the canary value (97h) such that instead of "EB 0k NOP NOP NOP ...", we have "EB 0k 97 97 97 .."
+	    // this canary value is needed by the verification process to know the end of the code section
 	    boolean end_canary_loop = false;
 	    for(int i=arr.length-6;i>=0;i--)
 	    {
@@ -78,7 +80,9 @@ public class Secure_Machine_Code_Masm2 {
 	    		break;
 
 	    }
-	    
+	    //Now that we have inserted an end of file canary, we need canaries for the key-shares.
+	    // So we look for byte pattern "EB 0k NOP NOP (k+1 times)" and transform it to "EB 0k 27 x y z ..."
+	    // where 27h is the canary to indicate keyshare locations and x, y, z are the actual keyshares for keys 1, 2,3, ...
 	    for(int i=0; i < arrlen; i++)
 	    {
 	    	
@@ -108,7 +112,7 @@ public class Secure_Machine_Code_Masm2 {
 	    	
 	    }
 
-	    // Print out all the keyshares 
+	    // Print out all the keyshares to verify
 	    for (int i = 0; i < k; i++)
 	    {
 	    	for (int j = 0; j < keys[i].size(); j++)
@@ -118,6 +122,8 @@ public class Secure_Machine_Code_Masm2 {
 	    	
 	    	
 	    }
+	    
+	    // Print out the actual keys which are the xors of their respective keyshares
 	    for(int i=0;i<k;i++)
 	    {
 	    	System.out.printf("Keyshare %d : 0x%02X \n",i, xor(keys[i]));

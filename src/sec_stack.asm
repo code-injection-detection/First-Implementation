@@ -77,18 +77,7 @@ nop
 nop
 
 
-;call next_21
-;next_21: nop
-;pop popret
-;add popret, 13h
-;jmp pop1
-;nop
-;nop
-;nop
-;nop
-;nop
-;mov eax, popvalue
-;mov retaddr, eax
+
 
 
 
@@ -138,8 +127,12 @@ invoke ExitProcess, 0
 ;;;;;;;;;OFFSET CALC ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-offsetcalc:
+;this code computes the offset from the stack ptr value. This offset is added to the current
+;value of the stack pointer to get the actual location
+;
+;
 
+offsetcalc:
 mov tempax, eax
 mov tempdx, edx
 mov tempsi, esi
@@ -170,7 +163,8 @@ mov eax, retaddress
 jmp eax 
 
 
-
+;this code handles the popping of a 32-bit data from the stack. it invokes the offset calculation code to do so.
+;it inserts data in a byte by byte fashion
 pop1:
 
 mov edx, 04h
@@ -233,7 +227,10 @@ mov popvalue, eax
 mov eax, popret
 jmp eax
 
-
+;this code handles the pushing of a 32-bit data from the stack. it invokes the offset calculation code to do so.
+;it inserts data in a byte by byte fashion
+; this is generic code and can be used to create secured versions of instructions like 'call' and 'ret' which do not just
+;push or pop
 
 push1:
 

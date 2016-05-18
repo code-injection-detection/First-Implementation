@@ -12,15 +12,15 @@ public class Secure_Machine_Code {
 	{
 		String filename = "C:/asm programs/add2_sec.exe"; 
 		String newfilename = filename.substring(0,filename.length()-4)+"_sec.exe";
-		//int n = 2;
+	
 		
 		int k = 2;
 		int numberofkeys = k-1;
-		// 
+	
 		FileInputStream fr = new FileInputStream(new File(filename));
 		FileOutputStream fw = new FileOutputStream(new File(newfilename));
 		ArrayList<Byte> list = new ArrayList<Byte>();
-		ArrayList[] keys = new ArrayList[numberofkeys]; // keeps track of the different 
+		ArrayList[] keys = new ArrayList[numberofkeys]; // keeps track of the different keys
 		for(int i=0;i<numberofkeys;i++)
 		{
 			keys[i] =new  ArrayList<Byte>(); //initializes the values

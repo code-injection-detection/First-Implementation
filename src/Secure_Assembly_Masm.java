@@ -1,6 +1,7 @@
 import java.util.*;
 import java.io.*;
 /*
+ * This is the MASM32 version of the Secure_Assembly java program
  * This program takes as input (has hardcoded name of file in it). The file
  * is a .asm / assembly file hence, it is in text format.
  * It inserts nop instructions (which will be replaced with keyshares) between
@@ -31,11 +32,9 @@ public class Secure_Assembly_Masm2 {
 		{
 			String line = sc.next();
 			line = removeNewlines(line);
-			//System.out.println(removeSpaces(line));
 			list.add(line);
 			if (removeSpaces(line).indexOf(".code")!=-1)
 			{
-				//System.out.println("I found the beginning of code");
 				break;
 			}			
 			
@@ -53,18 +52,18 @@ public class Secure_Assembly_Masm2 {
 			line = removeNewlines(line);
 			if (removeSpaces(line) == "")
 			{
-				//System.out.println("I see an empty line");
 				continue;
 			}
 			if (removeSpaces(line).startsWith("end") && !(sc.hasNext()))
 			{
-				//System.out.println("I came to end");
+
 				
 				list.add("jmp end_of_program_label");
 				
-				for(int m=0;m<k+2;m++)	//for reasons of efficiency, we force the end of file canary
+				for(int m=0;m<k+2;m++)	// We force the end of file canary
 				{   	                // to be followed by as many nops as the number of keyshares
-					list.add("nop");    // 
+							// to ease identification of the end of code
+					list.add("nop");    
 				}
 				
 				
@@ -73,6 +72,7 @@ public class Secure_Assembly_Masm2 {
 				break;
 			}
 			
+			// After skipping n instructions, we put in the key share
 			if (i == n)
 			{
 				list.add(" jmp " + ulabel + counter);
@@ -81,7 +81,7 @@ public class Secure_Assembly_Masm2 {
 				
 				list.add(ulabel + counter + ": nop");
 				list.add(line);
-				//System.out.println(line);
+
 				i = 0;
 				counter++;
 				continue;
@@ -101,7 +101,7 @@ public class Secure_Assembly_Masm2 {
 		
 		
 		// This write the modified lines into a new ASM
-		// You can use TASM to compile this ASM into machine code
+		// You can use MASM to assemble this ASM into machine code
 		String finalfile = "";
 		String newfilename = filename.substring(0,filename.length()-4) + "_sec.asm";
 		System.out.println(newfilename);
@@ -118,6 +118,9 @@ public class Secure_Assembly_Masm2 {
         bw.close();
 		
 	}
+	
+	// Removes spaces as well as changing the each character to lower case
+	// For comparing functions
 	static String removeSpaces(String abc)
 	{
 		String line = "";

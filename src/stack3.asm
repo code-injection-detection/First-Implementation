@@ -1,3 +1,7 @@
+ ; This code is a test code. It replaces a "push eax" instruction, by 
+ ;instructions which push the data in eax to the secure stack without
+ ;overwriting key-shares.
+ ;
  .386
  include \masm32\include\masm32rt.inc
  .MODEL flat, stdcall
@@ -420,12 +424,8 @@ mov esi, tempsi
 
 
 mov eax, retaddress
-jmp eax ;assuming that
+jmp eax 
 
-; do you wanna check this for a while? 
-; i've written the reasons for various decisions
-; i'll grab a coffee ... i have taken care of the imul and idiv stuff.... but have a look
-; and you can write alongside an instruction if you've doubts/disagreement
 	  
 	  
 BEGIN ENDP

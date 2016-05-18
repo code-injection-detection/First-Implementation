@@ -125,7 +125,7 @@ mov tempvar, eax
 sub tempvar, 150H
 
 mov eax, tempvar
-cmp esi, eax ;  If currptr > stackstart-150
+cmp esi, eax ;  If currptr > stackstart-size_of_stack
 jg Libel ; Jump to Label
 
 

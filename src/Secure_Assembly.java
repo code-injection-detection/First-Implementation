@@ -9,6 +9,8 @@ import java.io.*;
  * (The point is that parsing an assembly file is still way easier than parsing
  * a C file.)
  * To handle the jumps over the instructions, we add labels. 
+ 
+ Note: This works with 16-bit TASM code
  */
 public class Secure_Assembly {
 	

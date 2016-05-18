@@ -165,6 +165,9 @@ jmp eax
 
 ;this code handles the popping of a 32-bit data from the stack. it invokes the offset calculation code to do so.
 ;it inserts data in a byte by byte fashion
+;NOTE: in order to 'call' offset calc, we cannot use the normal call instruction, instead we have to use a jmp and in order for
+;the jmp to know where to return to, we calculate(actually, estimate) the return address value, and store it in ret_address.
+;then, offsetcalc can use the instruction "jmp eax" to jmp back to the appropriate address.
 pop1:
 
 mov edx, 04h
@@ -229,8 +232,11 @@ jmp eax
 
 ;this code handles the pushing of a 32-bit data from the stack. it invokes the offset calculation code to do so.
 ;it inserts data in a byte by byte fashion
-; this is generic code and can be used to create secured versions of instructions like 'call' and 'ret' which do not just
+;this is generic code and can be used to create secured versions of instructions like 'call' and 'ret' which do not just
 ;push or pop
+;NOTE: in order to 'call' offset calc, we cannot use the normal call instruction, instead we have to use a jmp and in order for
+;the jmp to know where to return to, we calculate(actually, estimate) the return address value, and store it in ret_address.
+;then, offsetcalc can use the instruction "jmp eax" to jmp back to the appropriate address.
 
 push1:
 

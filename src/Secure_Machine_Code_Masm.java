@@ -11,15 +11,15 @@ public class Secure_Machine_Code_Masm2 {
 	{
 		String filename = "C:/masm32/codesec_sec.exe"; 
 		String newfilename = filename.substring(0,filename.length()-4)+"_sec.exe";
-		//int n = 2;
 		
+		// k = size of key share
 		int k = 1;
 
 	 
 		FileInputStream fr = new FileInputStream(new File(filename));
 		FileOutputStream fw = new FileOutputStream(new File(newfilename));
 		ArrayList<Byte> list = new ArrayList<Byte>();
-		ArrayList[] keys = new ArrayList[k]; // keeps track of the different 
+		ArrayList[] keys = new ArrayList[k]; // keeps track of the different keys
 		
 		for(int i=0;i<k;i++)
 		{
@@ -42,8 +42,8 @@ public class Secure_Machine_Code_Masm2 {
 	    
 	    
 	    // This loop goes from the end of the file to the beginning, looking for
-	    // the signal to end the program
-	    // Before these, we have a EB 0k followed by k NOPs.
+	    // the values that signal the end the program
+	    // We need a EB 0k followed by k NOPs.
 	    // We need to put the ending canary right after the EB 0k
 	    boolean end_canary_loop = false;
 	    for(int i=arr.length-6;i>=0;i--)
@@ -51,8 +51,8 @@ public class Secure_Machine_Code_Masm2 {
 	    	if(arr[i]== -21)
 	    	{
 	    		end_canary_loop = true;
-	    		// check that there are indeed k+2 NOPs
-	    		for (int j = i+2; j< i+1+k+2; j++)
+	    		// check that there are indeed required (k+1) number of NOPs 
+	    		for (int j = i+2; j< i+2+k+1; j++)
 	    		{
 	    			if (arr[j] != 90)
 	    			{
@@ -67,20 +67,10 @@ public class Secure_Machine_Code_Masm2 {
 	    		}
 	    		
 	    		// put in value -105 ie 97H into each of the NOPs
-	    		for (int j = i+2; j< i+1+k+2; j++)
+
+	    		for (int j = i+2; j< i+2+k+1; j++)
 	    		{
 	    			arr[j] = -105;
-	    		
-	    			/*for(int j=i+2; j> 0 && (!end_canary_loop); j--)
-		    		{
-		    			if(arr[j] == -21) //-21 is opcode for EB
-		    			{
-		    				// -105 == 97 in the machine code
-		    				arr[j+2] = -105; // j+2 is the location of the first NOP after EB 0k
-		    				end_canary_loop = true;
-		    				break;
-		    			}
-		    		}*/
 	    		}
 	    	}
 	    	

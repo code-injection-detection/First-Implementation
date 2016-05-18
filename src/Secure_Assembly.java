@@ -100,7 +100,7 @@ public class Secure_Assembly {
 		}
 		
 		// This write the modified lines into a new ASM
-		// You can use TASM to compile this ASM into machine code
+		// You can use TASM to assemble this ASM into machine code
 		String finalfile = "";
 		String newfilename = filename.substring(0,filename.length()-4) + "_sec.asm";
 		System.out.println(newfilename);

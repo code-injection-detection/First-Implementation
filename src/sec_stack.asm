@@ -25,7 +25,10 @@ kplusn dd ?
 stackstart dd ?
 
 
-
+;since when we need to use offsetcalc, we have to jmp there, and we cannot use "call"
+;so we need to use global variables to store the return address
+; so the variables popret and pushret are used to store the return addresses in the code section
+; also, this process is a little more complicated due to the inability to access eip directly
 
 popret dd ?
 pushret dd ?
@@ -57,10 +60,8 @@ mov eax, stackstart
 mov realsp, eax
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;push 9h;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; code to push 9h 
 
 
 call next_1
@@ -88,9 +89,7 @@ nop
 
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;call ABCD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; call test_function
 
 call next_2
 next_2: nop
@@ -107,7 +106,7 @@ nop
 nop
 nop
 nop
-jmp abcx
+jmp test_function
 nop
 nop
 nop
@@ -291,12 +290,18 @@ jmp eax
 
 
 
-abcx:
+test_function:
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;pop retaddr;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; the actual code on an iunsecured stack would be
+; pop retaddr
+; pop ans
+; push retaddr
+; ret
+
+;;;
+
+;pop retaddr
 
 call next_12
 next_12: nop
@@ -311,11 +316,7 @@ nop
 mov eax, popvalue
 mov retaddr, eax
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;pop ans;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
+;pop ans
 
 call next_15
 next_15: nop
@@ -330,13 +331,7 @@ nop
 mov eax, popvalue
 mov ans, eax
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;push retaddr;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-
+; push retaddr
 
 call next_17
 next_17: nop
@@ -351,10 +346,7 @@ nop
 nop
 nop
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;ret;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ret
 
 call next_5
 next_5: nop

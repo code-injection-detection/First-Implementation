@@ -33,11 +33,10 @@ public class Secure_Assembly {
 		{
 			String line = sc.next();
 			line = removeNewlines(line);
-			//System.out.println(removeSpaces(line));
 			list.add(line);
 			if (removeSpaces(line).indexOf(".code")!=-1)
 			{
-				//System.out.println("I found the beginning of code");
+				
 				break;
 			}			
 			
@@ -55,18 +54,19 @@ public class Secure_Assembly {
 			line = removeNewlines(line);
 			if (removeSpaces(line) == "")
 			{
-				//System.out.println("I see an empty line");
+				
 				continue;
 			}
 			if (removeSpaces(line).startsWith("end"))
 			{
-				//System.out.println("I came to end");
 				
 				list.add("jmp end_of_program_label");
 				
-				for(int m=0;m<k;m++)	//for reasons of efficiency, we force the end of file canary
-				{   	                // to be followed by as many nops as the number of keyshares
-					list.add("nop");    // 
+				//for reasons of efficiency, we force the end of file canary
+				// to be followed by as many nops as the number of keyshares
+				for(int m=0;m<k;m++)	 
+				{   	                 
+					list.add("nop");
 				}
 				
 				
@@ -76,13 +76,15 @@ public class Secure_Assembly {
 				break;
 			}
 			
+			// this adds the jmps and the nops between n lines of assembly code
+		
 			if (i == n)
 			{
 				list.add(" jmp " + ulabel + counter);
 				for (int j = 0; j < k; j++)
 					list.add("NOP");
 				list.add(ulabel + counter + ": " + line);
-				//System.out.println(line);
+				
 				i = 0;
 				counter++;
 				continue;
@@ -90,7 +92,7 @@ public class Secure_Assembly {
 			
 			i++;
 			list.add(line);
-			//System.out.println(line);
+			
 		}
 		
 		
@@ -116,6 +118,7 @@ public class Secure_Assembly {
 
 		
 	}
+	//this removes the spaces in a string i.e. line of assembly code (for parsing purposes)
 	static String removeSpaces(String abc)
 	{
 		String line = "";
@@ -133,6 +136,7 @@ public class Secure_Assembly {
 		
 		return line;
 	}
+	//this removes the new line characters at the end of a string (line of assembly code)
 	static String removeNewlines(String s)
 	{
 		String line = "";

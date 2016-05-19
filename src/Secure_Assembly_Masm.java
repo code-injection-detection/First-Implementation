@@ -60,9 +60,11 @@ public class Secure_Assembly_Masm2 {
 				
 				list.add("jmp end_of_program_label");
 				
-				for(int m=0;m<k+2;m++)	// We force the end of file canary
-				{   	                // to be followed by as many nops as the number of keyshares
-							// to ease identification of the end of code
+				// We force the end of file canary
+				// to be followed by as many nops as the number of keyshares
+				// to ease identification of the end of code
+				for(int m=0;m<k+2;m++)	
+				{   	                
 					list.add("nop");    
 				}
 				

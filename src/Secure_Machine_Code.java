@@ -42,8 +42,10 @@ public class Secure_Machine_Code {
 	    
 	    // This loop goes from the end of the file to the beginning, looking for
 	    // The instruction opcodes for "B4 4C CD 21" which marks the signal to end the program
-	    // Before these opcodes, we have a EB 0k followed by k NOPs.
-	    // We need to put the ending canary right after the EB 0k
+	    // We search for the first "EB 0k NOP NOP .. (k+1 times)" immediately before "B4 4C CD 21"
+	    // Then we change that to "EB 0k 97 NOP NOP (k times)". Here 97 acts as a canary
+	    // B4 = -76, 4C = 76, -51 = CD, 33 = 21, -21 = EB
+	    
 	    boolean end_canary_loop = false;
 	    for(int i=arr.length-4;i>=0;i--)
 	    {
@@ -51,10 +53,9 @@ public class Secure_Machine_Code {
 	    	{
 	    		for(int j=i; j> 0 && (!end_canary_loop); j--)
 	    		{
-	    			if(arr[j] == -21) //-21 is opcode for EB
+	    			if(arr[j] == -21) 
 	    			{
-	    				// -105 == 97 in the machine code
-	    				arr[j+2] = -105; // j+2 is the location of the first NOP after EB 0k
+	    				arr[j+2] = -105; 
 	    				end_canary_loop = true;
 	    				break;
 	    			}
@@ -64,14 +65,18 @@ public class Secure_Machine_Code {
 	    		break;
 	    }
 	    
+	    
+	    // this loop goes from the start of the code section till the end
+	    // it searches for bytes "EB 0k NOP NOP (k+1 times)"
+	    // it inserts the key share values so that it looks like "EB 0k 27 x y z" where x, y, z are the key-shares
 	    for(int i=0;i<n-(2+k);i++)
 	    {
 	    	
 	    	
-	    	if(arr[i]==-21 && (arr[i+1] == (byte)k)) // int -21 = byte eb = jmp 
+	    	if(arr[i]==-21 && (arr[i+1] == (byte)k)) 
 	    	{
 	    		
-	    		boolean knops =  true;   // is true if there are k nops...
+	    		boolean knops =  true;   
 	    		for(int x= i+2; x<i+2+k ; x++)
 		    	{
 		    		if (arr[x] != -112)
@@ -81,7 +86,7 @@ public class Secure_Machine_Code {
 	    		if (knops == false)
 	    			continue;
 	    		
-	    		arr[i+2] = 39; // the layout is eb 0k 27 (<-- canary) keyshare1 keyshare2 ...
+	    		arr[i+2] = 39; 
 	    		for(int j=0;j<numberofkeys;j++)
 	    		{
 	    			byte temp = randomByte();
@@ -91,7 +96,7 @@ public class Secure_Machine_Code {
 	    	}
 	    }
 		
-	//printing out data
+	    //printing out data just to confirm correctness
 	    for(int i=0;i<numberofkeys;i++)
 	    {
 	    	System.out.printf("Keyshare %d : 0x%02X \n",i, xor(keys[i]));

@@ -62,9 +62,8 @@ mov eax, stackstart
 mov realsp, eax
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;push the value 9h;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;push the value 9h and pop it for a total of 20000000H times for simulation
 
 mov ecx, 20000000h
 
@@ -87,10 +86,6 @@ nop
 nop
 nop
 nop
-
-
-
-
 call next_21
 next_21: nop
 pop popret
@@ -117,18 +112,10 @@ nop
 
 
 
-
-
-
-
-;;;;;;;;;;;;;;;;;;;;;
 nop
 invoke ExitProcess, 0
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;OFFSET CALC ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;OFFSET CALC
 
 offsetcalc:
 

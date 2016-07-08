@@ -2,7 +2,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 public class StackProtectAutomate {
 	public static void main(String[] args) {
@@ -20,18 +23,29 @@ public class StackProtectAutomate {
 			System.out.println(l);
 		System.out.println("-------------END ORIGINAL FILE-------------");
 		
+		PrintWriter outputfile;
+		try {
+			outputfile = new PrintWriter("C:\\Users\\Yun\\workspace\\StackProtectAutomate\\src\\parseoutput.asm", "UTF-8");
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			System.err.println("Can't create new file");
+			return;
+		}
+
+		String movetype = "N/A";
 		String reg = "N/A";
 		String stackreg = "N/A";
 		String stackaddr = "N/A";
 		String stackoffset = "N/A";
 		boolean isReg2stack = false;
-		int wordsize = 4;
+		String wordsize = "N/A";
+		int geteipnum = 0;
+		
 		for (int i = 0; i < lines.size(); i++)
 		{
 			System.out.println(lines.get(i));
 			// Get the line& remove spaces&comments for easy handling
 			String s = removeSpaces(lines.get(i));
-			System.out.println(s);
+			
 			// First handle lines like "mov ecx, dword ptr [ebp+12]" 
 			// In this case: 
 			// reg == "ecx"
@@ -39,38 +53,64 @@ public class StackProtectAutomate {
 			// stackaddr == "dwordptr[ebp+12]"
 			// stackoffset == 12 (positive 12)
 			// isReg2stack == false
-			// wordsize == 4
+			// wordsize == dword
 			
 			if ( s.isEmpty()
 			 || !s.substring(0,3).equals("mov")
-			 || s.substring(0,5).equals("movsx")
 			 || !s.contains("ptr")
 			 || !s.contains("[")
 			 || !s.contains("]"))
 			{
-				// can only handle mov so far, haven't figured out movsx
-				// also not really handling push/pop yet
-				
-				//TODO: handle movsx
+				//  TODO: should also handle push/pop/call/ret
+
+				outputfile.println(lines.get(i));
 				continue;
 			}
+			
+			System.out.println("Line sans comments/spaces: " + s);
+			
+			// increment geteipnum for the trick to get content of EIP
+			geteipnum++;
 			
 			// remove the mov
 			s = s.substring(3);
 			
-			
-			// Check the wordsize (can only handle dword = 4 and byte = 1
-			if (s.contains("dword"))
+			// if start with sx, then we had movsx-- remove the sx
+			// this is no problem because movsx moves things INTO register,
+			// and no register starts with "sx"
+			if (s.startsWith("sx"))
 			{
-				wordsize = 4;
+				s = s.substring(2);
+				movetype = "movsx";
 			}
-			else if (s.contains("byte"))
+			else if (s.startsWith("zx"))
 			{
-				wordsize = 1;
+				s = s.substring(2);
+				movetype = "movzx";
 			}
 			else
 			{
-				wordsize = 1234; // ehhhhhhh can't handle any other size yet
+				movetype = "mov";
+			}
+			System.out.println("movetype = " + movetype);
+			
+			
+			// Check the wordsize (can only handle dword = 4 and byte = 1
+			if (s.contains("dwordptr"))
+			{
+				wordsize = "dword";
+			}
+			else if (s.contains("byteptr"))
+			{
+				wordsize = "byte";
+			}
+			else if (s.contains("wordptr"))
+			{
+				wordsize = "word";
+			}
+			else 
+			{
+				wordsize = "N/A"; // ehhhhhhh can't handle any other size yet
 			}
 			
 			System.out.println("Wordsize = " + wordsize);
@@ -144,8 +184,28 @@ public class StackProtectAutomate {
 			// Please refer to Le Manuel
 			
 			// TODO: actually write those lines in here?
+			outputfile.println("mov temp1si, esi");
+			outputfile.println("mov esi, " + stackreg);
+			outputfile.println("mov addroffset, " + stackoffset);
+			outputfile.println("call get_eip_" + geteipnum);
+			outputfile.println("get_eip_" + geteipnum + ":");
+			outputfile.println("pop retaddress");
+			outputfile.println("add retaddress, 15h");
+			outputfile.println("jmp offsetcalc"); 
+			outputfile.print(" nop \n nop \n nop \n nop \n nop \n nop \n nop \n nop \n nop \n nop \n nop \n nop \n nop\n nop \n nop \n nop \n");
+			outputfile.println("mov eax, tempax");
+			if (isReg2stack)
+			{
+				outputfile.println(movetype + " " + wordsize + " ptr [esi], " + reg);
+			}
+			else
+			{
+				outputfile.println(movetype + " " + reg + ", " +  wordsize + " ptr [esi]");
+			}
+			outputfile.println("mov esi, temp1si\n");
 		}
 		
+		outputfile.close();
 	}
 	
 	

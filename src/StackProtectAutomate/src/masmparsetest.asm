@@ -1,9 +1,10 @@
 
-mov ecx, DWORD PTR [ebp+12] ; first line
+mov ecx, word PTR [esp+12] ; first line
 ;NOP
 ;NOP
 
+movsx	ecx, BYTE PTR [ebp-16]
 mov DWORD PTR [ebp-12], ecx
 
 ;NOP
-mov ecx, BYTE PTR [ebp]
+movzx ecx, BYTE PTR [ebp]

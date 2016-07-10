@@ -1,9 +1,28 @@
+; to test call, should probably have ret too
+;call lulz:
 
+;nop
+;nop
+;invoke ExitProcess, 0
+
+
+;lulz:
+;ret
+; end call/ret test
+
+
+; push/pop test
+;pop di 
+;push ah ; push example
+
+
+; bunch of different kinds of moves
+; mov ecx, word PTR [esp+esi] 
 mov temp1si, esi
 mov esi, esp
-mov addroffset, 12
-call get_eip_1
-get_eip_1:
+mov addroffset, esi
+call get_eip_0
+get_eip_0:
 pop retaddress
 add retaddress, 15h
 jmp offsetcalc
@@ -27,92 +46,6 @@ mov eax, tempax
 mov ecx, word ptr [esi]
 mov esi, temp1si
 
-;NOP
-;NOP
-
-mov temp1si, esi
-mov esi, ebp
-mov addroffset, -16
-call get_eip_2
-get_eip_2:
-pop retaddress
-add retaddress, 15h
-jmp offsetcalc
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop
- nop 
- nop 
- nop 
-mov eax, tempax
-movsx ecx, byte ptr [esi]
-mov esi, temp1si
-
-mov temp1si, esi
-mov esi, ebp
-mov addroffset, -12
-call get_eip_3
-get_eip_3:
-pop retaddress
-add retaddress, 15h
-jmp offsetcalc
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop
- nop 
- nop 
- nop 
-mov eax, tempax
-mov dword ptr [esi], ecx
-mov esi, temp1si
-
-
-;NOP
-mov temp1si, esi
-mov esi, ebp
-mov addroffset, 0
-call get_eip_4
-get_eip_4:
-pop retaddress
-add retaddress, 15h
-jmp offsetcalc
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop 
- nop
- nop 
- nop 
- nop 
-mov eax, tempax
-movzx ecx, byte ptr [esi]
-mov esi, temp1si
-
+;movsx	ecx, BYTE PTR [ebp-16]
+;mov DWORD PTR [ebp-12], ecx
+;movzx ecx, BYTE PTR [ebp]
